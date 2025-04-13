@@ -1,0 +1,6 @@
+# See config.example.yml for documentation.
+object_base: orig/R8AE01
+object: sys/main.dol
+hash: 8c241f2aa9869a2ffc6d8f68eb55fcd0b6cdf9c8
+symbols: config/R8AE01/symbols.txt
+splits: config/R8AE01/splits.txt
