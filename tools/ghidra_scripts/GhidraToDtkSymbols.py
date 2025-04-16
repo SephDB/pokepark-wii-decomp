@@ -19,6 +19,7 @@ listing = currentProgram.getListing()
 sym_re = re.compile("(?:lbl|fn|FUN|DAT)(?:_[0-9]+_[a-z]+)?_[0-9A-Fa-f_]+ = \\.([a-z0-9]+):0x([0-9A-Fa-f]{8})(.*)\n")
 default_sym_re = re.compile("_[0-9A-Fa-f]{8}$")
 rel_default_sym_re = re.compile("lbl_[0-9]+_[a-z]+_[0-9A-Za-z]+$")
+check_sym_re = re.compile("fn_[0-9A-Fa-f_]+$")
 
 used_symbols = set()
 
@@ -54,12 +55,14 @@ def transformer_for_file(file_name, config_dir, fix_mistakes_mode):
         symbol = getSymbolAt(addr_obj)
         if symbol: #and symbol.getAddress().equals(addr_obj):
             name = symbol.getName(True)
-            if fix_mistakes_mode and rel_default_sym_re.match(name):
+            if fix_mistakes_mode and check_sym_re.match(name):
                 unit = listing.getCodeUnitAt(addr_obj)
                 if unit:
                     comment_str = unit.getComment(PLATE_COMMENT)
                     if comment_str and comment_str.startswith("original-name"):
+                        print("Fixed name:",name,comment_str.split('\n')[0])
                         name = comment_str.split('\n')[0][len("original-name "):]
+                        
 
             if default_sym_re.search(name) or name.startswith("@"):
                 return None
@@ -145,14 +148,3 @@ with open(main_symbols, "rt") as file:
 
 with open(main_symbols, 'w') as f:
     f.write(new_contents)
-
-
-rels_dir = os.path.join(path, "rels")
-for rel_name in os.listdir(rels_dir):
-    if rel_name.endswith("NP"):
-        rel_symbols = os.path.join(rels_dir, rel_name, "symbols.txt")
-        with open(rel_symbols, "rt") as file:
-            new_contents = transform_symbols_file(file, transformer_for_file(rel_name, path, fix_mistakes_mode))
-
-        with open(rel_symbols, 'w') as f:
-            f.write(new_contents)
