@@ -144,8 +144,8 @@ if not config.non_matching:
 # Tool versions
 config.binutils_tag = "2.42-1"
 config.compilers_tag = "20240706"
-config.dtk_tag = "v1.3.0"
-config.objdiff_tag = "v2.4.0"
+config.dtk_tag = "v1.6.2"
+config.objdiff_tag = "v3.0.0"
 config.sjiswrap_tag = "v1.2.0"
 config.wibo_tag = "0.6.11"
 
@@ -177,6 +177,31 @@ config.reconfig_deps = []
 # Can be overridden in libraries or objects
 config.scratch_preset_id = None
 
+include_flags = [
+    # C/C++ stdlib
+    # STLport requires that it comes first in the include path list
+    "-i src/system/stlport",
+    "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C",
+    # Not included since it's all wrapped by stlport
+    # "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C++",
+
+    # To allow referring directly to the MSL SDK instead of going through STLport
+    "-i src/sdk/PowerPC_EABI_Support/MSL",
+
+    # SDK
+    "-i src/sdk",
+
+    # Libraries
+    "-i src/libs",
+    "-i src/system/speex/include",
+
+    # Project source
+    "-i src",
+    "-i src/network",
+    "-i src/system",
+    "-i src/band3",
+]
+
 # Base flags, common to most GC/Wii games.
 # Generally leave untouched, with overrides added below.
 cflags_base = [
@@ -196,7 +221,8 @@ cflags_base = [
     "-RTTI off",
     "-fp_contract on",
     "-str reuse",
-    "-enc SJIS",  # For Wii compilers, replace with `-enc SJIS`
+    "-enc SJIS",
+    *include_flags,
     "-i include",
     f"-i build/{config.version}/include",
     f"-DBUILD_VERSION={version_num}",
@@ -206,7 +232,7 @@ cflags_base = [
 # Debug flags
 if args.debug:
     # Or -sym dwarf-2 for Wii compilers
-    cflags_base.extend(["-sym on", "-DDEBUG=1"])
+    cflags_base.extend(["-sym dwarf-2", "-DDEBUG=1"])
 else:
     cflags_base.append("-DNDEBUG=1")
 
@@ -218,13 +244,7 @@ cflags_runtime = [
     "-gccinc",
     "-common off",
     "-inline auto",
-]
-
-# REL flags
-cflags_rel = [
-    *cflags_base,
-    "-sdata 0",
-    "-sdata2 0",
+    "-func_align 4",
 ]
 
 config.linker_version = "Wii/1.0"
@@ -241,20 +261,11 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     }
 
 
-# Helper function for REL script objects
-def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
-    return {
-        "lib": lib_name,
-        "mw_version": "Wii/1.0",
-        "cflags": cflags_rel,
-        "progress_category": "game",
-        "objects": objects,
-    }
-
-
-Matching = True                   # Object matches and should be linked
-NonMatching = False               # Object does not match and should not be linked
-Equivalent = config.non_matching  # Object should be linked when configured with --non-matching
+Matching = True  # Object matches and should be linked
+NonMatching = False  # Object does not match and should not be linked
+Equivalent = (
+    config.non_matching
+)  # Object should be linked when configured with --non-matching
 
 
 # Object is only matching for specific versions
@@ -268,11 +279,16 @@ config.libs = [
     {
         "lib": "Runtime.PPCEABI.H",
         "mw_version": config.linker_version,
-        "cflags": cflags_runtime,
+        "cflags": cflags_runtime + [
+                                "-d _STLP_WHOLE_NATIVE_STD",
+                                "-d _STLP_DONT_REDEFINE_STD"
+                ],
         "progress_category": "sdk",  # str | List[str]
         "objects": [
-            Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
-            Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/global_destructor_chain.c"),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__init_cpp_exceptions.cpp"),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/NMWException.cpp", extra_cflags=["-Cpp_exceptions on"]),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/Gecko_ExceptionPPC.cpp", clean_extab=True, extra_cflags=["-Cpp_exceptions on"]),
         ],
     },
 ]
@@ -290,6 +306,7 @@ def link_order_callback(module_id: int, objects: List[str]) -> List[str]:
     if module_id == 0:  # DOL
         return objects + ["dummy.c"]
     return objects
+
 
 # Uncomment to enable the link order callback.
 # config.link_order_callback = link_order_callback

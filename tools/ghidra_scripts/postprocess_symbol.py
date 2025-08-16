@@ -1,3 +1,7 @@
+# Taken verbatim from the legend of zelda skyward sword decompilation. Thank you robojumper!
+# https://github.com/zeldaret/ss/blob/eb2943d07e2ec2b4104227ee971719ba1dc50ad1/tools/ghidra_scripts/postprocess_symbol.py
+
+
 def postprocess_demangled_name(demangled):
     """Turn a demangled name into a name that's usable as a Ghidra symbol name,
     by stripping illegal characters and making sure namespaces are created as expected"""

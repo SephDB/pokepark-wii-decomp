@@ -7,18 +7,28 @@
 
 import java.util.HashMap;
 
+import generic.theme.GThemeDefaults.Colors.Palette;
 import ghidra.app.script.GhidraScript;
+import ghidra.app.services.GraphDisplayBroker;
+import ghidra.framework.plugintool.PluginTool;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.data.CategoryPath;
 import ghidra.program.model.data.DataTypeConflictHandler;
 import ghidra.program.model.data.PointerDataType;
 import ghidra.program.model.data.SignedDWordDataType;
-import ghidra.program.model.data.Structure;
 import ghidra.program.model.data.StructureDataType;
 import ghidra.program.model.data.TerminatedStringDataType;
 import ghidra.program.model.mem.MemoryAccessException;
 import ghidra.program.model.mem.MemoryBlock;
 import ghidra.program.model.symbol.SymbolUtilities;
+import ghidra.service.graph.AttributedGraph;
+import ghidra.service.graph.GraphDisplay;
+import ghidra.service.graph.GraphDisplayOptions;
+import ghidra.service.graph.GraphDisplayOptionsBuilder;
+import ghidra.service.graph.GraphDisplayProvider;
+import ghidra.service.graph.GraphTypeBuilder;
+import ghidra.service.graph.VertexShape;
+import ghidra.util.task.TaskMonitor;
 import mw_rtti.MWClassInfo;
 
 public class MW_RTTI_ClassInfo extends GhidraScript {
@@ -54,6 +64,13 @@ public class MW_RTTI_ClassInfo extends GhidraScript {
 		}
 		
 		TryAddVtable(currentAddress);
+		
+		if(FoundClasses.isEmpty()) {
+			println("No classes found!");
+			return;
+		}
+		
+		ShowGraph();
 	}
 	
 	private MWClassInfo TryAddVtable(Address address) {
@@ -89,8 +106,58 @@ public class MW_RTTI_ClassInfo extends GhidraScript {
 			println("Failed to parse class name at "+name_ptr.toString());
 			return null;
 		}
+		
 		println("Found typeinfo for "+name);
-		return null;
+		ret = new MWClassInfo(name,address);
+		
+		try {
+			AddBases(ret);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		FoundClasses.put(address, ret);
+		
+		return ret;
+	}
+	
+	private void AddBases(MWClassInfo c) throws Exception {
+		Address base_list = TryGetPointer(c.address.add(4));
+		if(base_list == null) return;
+		Address base_type_info = TryGetPointer(base_list);
+		while(base_type_info != null) {
+			Address offset = base_list.add(4);
+			if(!isDataMemory(offset)) {
+				println("Invalid read of offset at: "+offset.toString());
+				return;
+			}
+			int offset_value = getInt(offset);
+			if(offset_value < 0) {
+				println("Found ambig_list! TODO: figure out what to do with this! "+offset.toString());
+				goTo(offset);
+				return;
+			}
+			var type = TryAddTypeInfo(base_type_info);
+			if(type == null) return;
+			c.AddBase(type, offset_value);
+			println("Found base type of "+c.name+" at offset "+String.valueOf(offset_value) + ": "+type.name);
+			base_list = base_list.add(8);
+			base_type_info = TryGetPointer(base_list);
+		}
+		print("Bases of ");
+		print(c.name);
+		print(":\n");
+		c.direct_bases.forEach(b -> {
+			print(String.valueOf(b.offset));
+			print(":");
+			print(b.base.name);
+			if(b.virtual) {
+				print(" (virtual)");
+			}
+			print("\n");
+			});
 	}
 	
 	private String TryGetName(Address address) {
@@ -125,7 +192,6 @@ public class MW_RTTI_ClassInfo extends GhidraScript {
 		 int name_ptr = 0;
 		try {
 			name_ptr = getInt(address);
-			writer.println(name_ptr);
 		} catch (MemoryAccessException e) {
 			return null;
 		}
@@ -137,6 +203,40 @@ public class MW_RTTI_ClassInfo extends GhidraScript {
 	
 	private boolean isDataMemory(Address address) {
 		MemoryBlock block = currentProgram.getMemory().getBlock(address);
-		return block != null && !block.isExecute() && block.isRead();
+		return block != null && !block.isExecute() && block.isRead() && address.isLoadedMemoryAddress();
+	}
+	
+	private void ShowGraph() throws Exception {
+		AttributedGraph graph = new AttributedGraph("Class diagram",new GraphTypeBuilder("Class diagram")
+				.vertexType("V")
+				.edgeType("E")
+				.build());
+		
+		FoundClasses.forEach((_address,c) -> {
+			var this_v = graph.addVertex(c.name);
+			this_v.setVertexType("V");
+			c.direct_bases.forEach(base -> {
+				var target_v = graph.addVertex(base.base.name);
+				graph.addEdge(this_v, target_v).setEdgeType("E");
+			});
+		});
+		
+		GraphDisplay display;
+		PluginTool tool = state.getTool();
+		GraphDisplayBroker broker = tool.getService(GraphDisplayBroker.class);
+		GraphDisplayProvider service = broker.getGraphDisplayProvider("Default Graph Display");
+		display = service.getGraphDisplay(false, TaskMonitor.DUMMY);
+
+		GraphDisplayOptions graphOptions = new GraphDisplayOptionsBuilder(graph.getGraphType())
+				.vertex("V", VertexShape.RECTANGLE, Palette.BLUE)
+				.edge("E", Palette.LIME)
+				.defaultVertexColor(Palette.PURPLE)
+				.defaultEdgeColor(Palette.PURPLE)
+				.defaultLayoutAlgorithm("Compact Hierarchical")
+				.maxNodeCount(1000)
+				.build();
+
+		display.setGraph(graph, graphOptions,
+			"Recovered Classes Graph", false, TaskMonitor.DUMMY);
 	}
 }

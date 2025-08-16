@@ -13,9 +13,26 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
-Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
+sdk/PowerPC_EABI_Support/Runtime/global_destructor_chain.c:
+	.text       start:0x802F3548 end:0x802F35A8
+	.sbss       start:0x804873D0 end:0x804873D4
+
+sdk/PowerPC_EABI_Support/Runtime/NMWException.cpp:
+	extab       start:0x800066C0 end:0x80006710
+	extabindex  start:0x80006760 end:0x800067A8
+	.text       start:0x802F35A8 end:0x802F3C58
+	.sdata      start:0x80486288 end:0x8048628C
+
+sdk/PowerPC_EABI_Support/Runtime/__init_cpp_exceptions.cpp:
 	.text       start:0x802F4744 end:0x802F47B4
 	.ctors      start:0x803067C0 end:0x803067C4 rename:.ctors$10
 	.dtors      start:0x80306880 end:0x80306884 rename:.dtors$10
 	.dtors      start:0x80306884 end:0x80306888 rename:.dtors$15
-	.sdata      start:0x80486298 end:0x804862A0
+	.sdata      start:0x80486298 end:0x8048629C
+
+sdk/PowerPC_EABI_Support/Runtime/Gecko_ExceptionPPC.cpp:
+	extab       start:0x80006720 end:0x8000675E
+	extabindex  start:0x800067C0 end:0x800067FC
+	.text       start:0x802F47B4 end:0x802F5CD0
+	.data       start:0x8036C5D8 end:0x8036C660
+	.bss        start:0x80480E70 end:0x80480FF0
