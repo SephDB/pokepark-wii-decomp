@@ -5,7 +5,7 @@
 #include "types.h"
 #include <typeinfo>
 
-static type_info_struct unknown_type = { "???" };
+type_info_struct unknown_type = { "???" };
 
 static int strequal(const char *s1, const char *s2) {
     for (; *s1 == *s2; s1++, s2++) {
