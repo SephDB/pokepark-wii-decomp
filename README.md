@@ -89,7 +89,7 @@ Building
   python configure.py
   ```
 
-  To use a version other than `R8AE01` (USA), specify it with `--version`.
+  To use a version other than `R8AE01` (currently the only one supported), specify it with `--version`.
 
 - Build:
 
