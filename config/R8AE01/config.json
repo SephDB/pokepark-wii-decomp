@@ -1,0 +1,64 @@
+{
+    "progress_categories": {
+        "game": "Game Code",
+        "sdk": "SDK Code"
+    },
+    "asflags": [
+        "-mgekko",
+        "--strip-local-absolute",
+        "-I include"
+    ],
+    "ldflags": [
+        "-fp hardware",
+        "-nodefaults",
+        "-listclosure"
+    ],
+    "cflags": {
+        "base": {
+            "flags": [
+                "-nodefaults",
+                "-nosyspath",
+                "-gccinc",
+
+                "-maxerrors 1",
+                "-nowraplines",
+
+                "-proc gekko",
+                "-align powerpc",
+                "-enum int",
+                "-fp hardware",
+
+                "-pragma \"cats off\"",
+
+                "-pragma \"warning off (10184)\"",
+                "-pragma \"warn_notinlined off\"",
+                "-pragma \"warn_filenamecaps on\"",
+                "-pragma \"warn_filenamecaps_system on\"",
+
+                "-RTTI off",
+                "-Cpp_exceptions off"
+            ]
+        },
+        "sdk/MSL": {
+            "base": "base",
+            "flags": [
+                "-str reuse,pool,readonly",
+
+                "-use_lmw_stmw on",
+                "-common off",
+
+                "-lang=c99",
+                "-O4,p",
+                "-inline auto",
+                "-func_align 4",
+
+                "-d _STLP_WHOLE_NATIVE_STD",
+                "-d _STLP_DONT_REDEFINE_STD"
+            ]
+        },
+        "sdk/Runtime": {
+            "base": "sdk/MSL",
+            "flags": []
+        }
+    }
+}

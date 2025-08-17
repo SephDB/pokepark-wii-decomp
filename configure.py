@@ -13,9 +13,10 @@
 ###
 
 import argparse
+import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, List
 
 from tools.project import (
     Object,
@@ -164,20 +165,90 @@ config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "0.7.0"
 
 # Project
-config.config_path = Path("config") / config.version / "config.yml"
-config.check_sha_path = Path("config") / config.version / "build.sha1"
+config_dir = Path("config") / config.version
+config.config_path = config_dir / "config.yml"
+config.check_sha_path = config_dir / "build.sha1"
+config_json_path = config_dir / "config.json"
+objects_path = config_dir / "objects.json"
+config.reconfig_deps = [
+    config_json_path,
+    objects_path
+]
+
+# Build flags
+flags = json.load(open(config_json_path, "r", encoding="utf-8"))
+progress_categories: dict[str, str] = flags["progress_categories"]
+asflags: list[str] = flags["asflags"]
+ldflags: list[str] = flags["ldflags"]
+cflags: dict[str, dict] = flags["cflags"]
+
+
+cflags_includes = [
+    # C/C++ stdlib
+    # STLport requires that it comes first in the include path list
+    # "-i src/system/stlport",
+    f"-i build/{config.version}/include",
+    "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C",
+    # Not included since it's all wrapped by stlport
+    "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C++",
+
+    # To allow referring directly to the MSL SDK instead of going through STLport
+    "-i src/sdk/PowerPC_EABI_Support/MSL",
+
+    # SDK
+    "-i src/sdk",
+
+    # Project source
+    "-i src",
+    "-i ."
+]
+
+
+def get_cflags(name: str) -> list[str]:
+    return cflags[name]["flags"]
+
+
+def add_cflags(name: str, flags: list[str]):
+    cflags[name]["flags"] = [*flags, *cflags[name]["flags"]]
+
+
+def get_cflags_base(name: str) -> str | None:
+    return cflags[name].get("base", None)
+
+
+def are_cflags_inherited(name: str) -> bool:
+    return "inherited" in cflags[name]
+
+
+def set_cflags_inherited(name: str):
+    cflags[name]["inherited"] = True
+
+
+def apply_base_cflags(key: str):
+    if are_cflags_inherited(key):
+        return
+
+    base = get_cflags_base(key)
+    if base is None:
+        add_cflags(key, cflags_includes)
+    else:
+        apply_base_cflags(base)
+        add_cflags(key, get_cflags(base))
+
+    set_cflags_inherited(key)
+
+
+# Set up base flags
+base_cflags = get_cflags("base")
+
 config.asflags = [
-    "-mgekko",
-    "--strip-local-absolute",
-    "-I include",
+    *asflags,
     f"-I build/{config.version}/include",
     f"--defsym BUILD_VERSION={version_num}",
     f"--defsym VERSION_{config.version}",
 ]
-config.ldflags = [
-    "-fp hardware",
-    "-nodefaults",
-]
+config.ldflags = ldflags
+
 if args.debug:
     config.ldflags.append("-g")  # Or -gdwarf-2 for Wii linkers
 if args.map:
@@ -191,96 +262,26 @@ config.reconfig_deps = []
 # Can be overridden in libraries or objects
 config.scratch_preset_id = None
 
-include_flags = [
-    # C/C++ stdlib
-    # STLport requires that it comes first in the include path list
-    #"-i src/system/stlport",
-    "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C",
-    # Not included since it's all wrapped by stlport
-    "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C++",
-
-    # To allow referring directly to the MSL SDK instead of going through STLport
-    "-i src/sdk/PowerPC_EABI_Support/MSL",
-
-    # SDK
-    "-i src/sdk",
-
-    # Libraries
-    "-i src/libs",
-    "-i src/system/speex/include",
-
-    # Project source
-    "-i src",
-    "-i src/network",
-    "-i src/system",
-    "-i src/band3",
-]
-
-# Base flags, common to most GC/Wii games.
-# Generally leave untouched, with overrides added below.
-cflags_base = [
-    "-nodefaults",
-    "-proc gekko",
-    "-align powerpc",
-    "-enum int",
-    "-fp hardware",
-    "-Cpp_exceptions off",
-    # "-W all",
-    "-O4,p",
-    "-inline auto",
-    '-pragma "cats off"',
-    '-pragma "warn_notinlined off"',
-    "-maxerrors 1",
-    "-nosyspath",
-    "-RTTI off",
-    "-fp_contract on",
-    "-str reuse",
-    "-enc SJIS",
-    *include_flags,
-    "-i include",
-    f"-i build/{config.version}/include",
-    f"-DBUILD_VERSION={version_num}",
-    f"-DVERSION_{config.version}",
-]
-
 # Debug flags
 if args.debug:
     # Or -sym dwarf-2 for Wii compilers
-    cflags_base.extend(["-sym dwarf-2", "-DDEBUG=1"])
+    base_cflags.extend(["-sym dwarf-2", "-DDEBUG=1"])
 else:
-    cflags_base.append("-DNDEBUG=1")
+    base_cflags.append("-DNDEBUG=1")
 
 # Warning flags
 if args.warn == "all":
-    cflags_base.append("-W all")
+    base_cflags.append("-W all")
 elif args.warn == "off":
-    cflags_base.append("-W off")
+    base_cflags.append("-W off")
 elif args.warn == "error":
-    cflags_base.append("-W error")
+    base_cflags.append("-W error")
 
-# Metrowerks library flags
-cflags_runtime = [
-    *cflags_base,
-    "-use_lmw_stmw on",
-    "-str reuse,pool,readonly",
-    "-gccinc",
-    "-common off",
-    "-inline auto",
-    "-func_align 4",
-]
+# Apply cflag inheritance
+for key in cflags.keys():
+    apply_base_cflags(key)
 
 config.linker_version = "Wii/1.0"
-
-
-# Helper function for Dolphin libraries
-def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
-    return {
-        "lib": lib_name,
-        "mw_version": "Wii/1.0",
-        "cflags": cflags_base,
-        "progress_category": "sdk",
-        "objects": objects,
-    }
 
 
 Matching = True  # Object matches and should be linked
@@ -297,28 +298,56 @@ def MatchingFor(*versions):
 
 config.warn_missing_config = True
 config.warn_missing_source = True
-config.libs = [
-    {
-        "lib": "Runtime.PPCEABI.H",
-        "mw_version": config.linker_version,
-        "cflags": cflags_runtime + [
-                                "-d _STLP_WHOLE_NATIVE_STD",
-                                "-d _STLP_DONT_REDEFINE_STD"
-                ],
-        "progress_category": "sdk",  # str | List[str]
-        "objects": [
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/global_destructor_chain.c"),
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__init_cpp_exceptions.cpp"),
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/NMWException.cpp", extra_cflags=["-Cpp_exceptions on"]),
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/Gecko_ExceptionPPC.cpp", extra_cflags=["-Cpp_exceptions on"]),
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/ptmf.c"),
-            Object(NonMatching, "sdk/PowerPC_EABI_Support/Runtime/MWRTTI.cpp", extra_cflags=["-Cpp_exceptions on", "-RTTI on"]), #Weak symbols causing it not to link
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/runtime.c"),
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__va_arg.c"),
-            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__mem.c"),
-        ],
-    },
-]
+def get_object_completed(status: str) -> bool:
+    if status == "MISSING":
+        return NonMatching
+    elif status == "Matching":
+        return Matching
+    elif status == "NonMatching":
+        return NonMatching
+    elif status == "Equivalent":
+        return Equivalent
+    elif status == "LinkIssues":
+        return NonMatching
+
+    assert False, f"Invalid object status {status}"
+
+libs: list[dict] = []
+objects: dict[str, dict] = json.load(open(objects_path, "r", encoding="utf-8"))
+for (lib, lib_config) in objects.items():
+    # config_cflags: str | list[str]
+    config_cflags: list[str] = lib_config.pop("cflags")
+    lib_cflags = get_cflags(config_cflags) if isinstance(config_cflags, str) else config_cflags
+
+    lib_objects: list[Object] = []
+    # config_objects: dict[str, str | dict]
+    config_objects: dict[str, str | dict[str, str | Any]] = lib_config.pop("objects")
+    if len(config_objects) < 1:
+        continue
+
+    for (path, obj_config) in config_objects.items():
+        if isinstance(obj_config, str):
+            completed = get_object_completed(obj_config)
+            lib_objects.append(Object(completed, path))
+        else:
+            completed = get_object_completed(obj_config["status"])
+
+            if "cflags" in obj_config:
+                object_cflags = obj_config["cflags"]
+                if isinstance(object_cflags, str):
+                    obj_config["cflags"] = get_cflags(object_cflags)
+
+            lib_objects.append(Object(completed, path, **obj_config))
+
+    libs.append({
+        "lib": lib,
+        "cflags": lib_cflags,
+        "host": False,
+        "objects": lib_objects,
+        **lib_config
+    })
+
+config.libs = libs
 
 
 # Optional callback to adjust link order. This can be used to add, remove, or reorder objects.
@@ -340,10 +369,7 @@ def link_order_callback(module_id: int, objects: List[str]) -> List[str]:
 
 # Optional extra categories for progress tracking
 # Adjust as desired for your project
-config.progress_categories = [
-    ProgressCategory("game", "Game Code"),
-    ProgressCategory("sdk", "SDK Code"),
-]
+config.progress_categories = [ProgressCategory(name, desc) for (name, desc) in progress_categories.items()]
 config.progress_each_module = args.verbose
 # Optional extra arguments to `objdiff-cli report generate`
 config.progress_report_args = [
