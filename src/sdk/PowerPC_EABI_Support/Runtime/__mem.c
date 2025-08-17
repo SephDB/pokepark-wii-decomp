@@ -1,6 +1,7 @@
 #include "__mem.h"
 #include "types.h"
 
+
 /* https://github.com/xbret/xenoblade/blob/main/libs/PowerPC_EABI_Support/src/Runtime/__mem.c */
 /* Handwritten asm; attempted to match as C here: https://decomp.me/scratch/R3nOu */
 /* clang-format off *//* asm func */
@@ -233,58 +234,71 @@ reverse_byte_loop_3:
 }
 /* clang-format on */
 
-void __fill_mem(void *dest, int ch, size_t count) {
-    ch &= 0xFF;
-    u8 *byteDest = (u8 *)dest - 1;
-
-    if (count >= 32) {
-        /* Align to 4-byte boundary */
-        size_t alignDist = ~(size_t)byteDest & 3;
-        if (alignDist != 0) {
-            count -= alignDist;
-            while (alignDist--, *++byteDest = ch, alignDist);
+void __fill_mem(void * dest, int val, size_t count)
+{
+    char * cdest = (char *)dest;
+    int cval = (unsigned char)val;
+    int * idest = (int *)dest;
+    int r0;
+    cdest--;
+    if (count >= 0x20)
+    {
+        r0 = ~(int)(cdest) & 3;
+        
+        if (r0)
+        {
+            count -= r0;
+            
+            do
+            {
+                *++cdest = cval;
+            } while(--r0);
         }
-
-        /* Copy value to upper bytes */
-        if (ch != 0) {
-            ch |= (ch << 0x18) | (ch << 0x10) | (ch << 8);
+        
+        if (cval)
+        {
+            cval = (cval << 0x18) | (cval << 0x10) | (cval << 0x8) | cval;
         }
-
-        /* Copy 4 bytes at a time, first in chunks of 32 bytes */
-        uint *alignDest = (uint *)(byteDest - 3);
-        size_t alignCount = count / 32;
-        if (alignCount != 0) {
-            do {
-                alignDest[1] = ch;
-                alignDest[2] = ch;
-                alignDest[3] = ch;
-                alignDest[4] = ch;
-                alignDest[5] = ch;
-                alignDest[6] = ch;
-                alignDest[7] = ch;
-                alignDest[8] = ch;
-                alignDest += 8;
-            } while (--alignCount != 0);
+        
+        r0 = count >> 5;
+        idest = (int *)(cdest - 3);
+        
+        if (r0)
+        {
+            do
+            {
+                idest[1] = cval;//4
+                --r0;
+                idest[2] = cval;//8
+                idest[3] = cval;//c
+                idest[4] = cval;//10
+                idest[5] = cval;//14
+                idest[6] = cval;//18
+                idest[7] = cval;//1c
+                *(idest += 8) = cval;//20
+            } while (r0);
         }
-
-        /* Copy remaining 4-byte chunks */
-        alignCount = (count / 4) & 7;
-        if (alignCount != 0) {
-            do {
-                *++alignDest = ch;
-            } while (--alignCount != 0);
+        
+        r0 = (count >> 2) & 7;
+        
+        if (r0)
+        {
+            do
+            {
+                *++idest = cval;
+            } while(--r0);
         }
-
-        /* Prepare for final byte-wise copy */
-        byteDest = (u8 *)((size_t)alignDest + 3);
+        
+        cdest = (char *)idest + 3;
         count &= 3;
     }
-
-    /* Copy one byte at a time */
-    if (count != 0) {
-        do {
-            *++byteDest = ch;
-        } while (--count);
+    
+    if (count)
+    {
+        do
+        {
+            *++cdest = cval;
+        } while(--count);
     }
 }
 

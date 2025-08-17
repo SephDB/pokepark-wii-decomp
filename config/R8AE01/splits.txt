@@ -13,6 +13,13 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
+sdk/PowerPC_EABI_Support/Runtime/__mem.c:
+	.init       start:0x80004364 end:0x800046E4
+	.text       start:0x802F3464 end:0x802F3480
+
+sdk/PowerPC_EABI_Support/Runtime/__va_arg.c:
+	.text       start:0x802F3480 end:0x802F3548
+
 sdk/PowerPC_EABI_Support/Runtime/global_destructor_chain.c:
 	.text       start:0x802F3548 end:0x802F35A8
 	.sbss       start:0x804873D0 end:0x804873D4

@@ -292,6 +292,8 @@ config.libs = [
             Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/ptmf.c"),
             Object(NonMatching, "sdk/PowerPC_EABI_Support/Runtime/MWRTTI.cpp", extra_cflags=["-Cpp_exceptions on", "-RTTI on"]), #Weak symbols causing it not to link
             Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/runtime.c"),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__va_arg.c"),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__mem.c"),
         ],
     },
 ]
