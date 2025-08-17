@@ -289,6 +289,7 @@ config.libs = [
             Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/__init_cpp_exceptions.cpp"),
             Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/NMWException.cpp", extra_cflags=["-Cpp_exceptions on"]),
             Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/Gecko_ExceptionPPC.cpp", clean_extab=True, extra_cflags=["-Cpp_exceptions on"]),
+            Object(Matching, "sdk/PowerPC_EABI_Support/Runtime/ptmf.c"),
         ],
     },
 ]

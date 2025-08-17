@@ -2,7 +2,7 @@
 
 #include "ptmf.h"
 
-const __ptmf __ptmf_null = { 0, 0, 0 };
+//const __ptmf __ptmf_null = { 0, 0, 0 }; //TODO: see if this does end up anywhere in rodata
 
 /* clang-format off *//* asm funcs */
 

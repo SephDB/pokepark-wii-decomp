@@ -23,6 +23,9 @@ sdk/PowerPC_EABI_Support/Runtime/NMWException.cpp:
 	.text       start:0x802F35A8 end:0x802F3C58
 	.sdata      start:0x80486288 end:0x8048628C
 
+sdk/PowerPC_EABI_Support/Runtime/ptmf.c:
+	.text       start:0x802F3C58 end:0x802F3CB0
+
 sdk/PowerPC_EABI_Support/Runtime/__init_cpp_exceptions.cpp:
 	.text       start:0x802F4744 end:0x802F47B4
 	.ctors      start:0x803067C0 end:0x803067C4 rename:.ctors$10
