@@ -59,6 +59,12 @@
         "sdk/Runtime": {
             "base": "sdk/MSL",
             "flags": []
+        },
+        "sdk/MSL_C/fdlibm": {
+            "base": "sdk/MSL",
+            "flags": [
+                "-d _IEEE_LIBM"
+            ]
         }
     }
 }
