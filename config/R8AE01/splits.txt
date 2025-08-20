@@ -13,6 +13,30 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
+sdk/RVL_SDK/revolution/os/OS.c:
+	.text       start:0x80206010 end:0x80207420
+
+sdk/RVL_SDK/revolution/os/OSAlarm.c:
+	.text       start:0x80207420 end:0x80207CF0
+
+sdk/RVL_SDK/revolution/os/OSAlloc.c:
+	.text       start:0x80207CF0 end:0x80208010
+
+libs/RVL_SDK/src/revolution/os/OSArena.c:
+	.text       start:0x80208010 end:0x80208110 align:16
+
+libs/RVL_SDK/src/revolution/os/OSAudioSystem.c:
+	.text       start:0x80208110 end:0x802085D0 align:16
+
+libs/RVL_SDK/src/revolution/os/OSCache.c:
+	.text       start:0x802085D0 end:0x80208D20 align:16
+
+sdk/RVL_SDK/revolution/os/__start.c:
+	.init       start:0x80004000 end:0x80004300
+
+sdk/RVL_SDK/revolution/os/__ppc_eabi_init.c:
+	.init       start:0x80004300 end:0x80004364
+
 sdk/PowerPC_EABI_Support/Runtime/__mem.c:
 	.init       start:0x80004364 end:0x800046E4
 	.text       start:0x802F3464 end:0x802F3480
@@ -179,3 +203,6 @@ sdk/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common_Embedded/Math/Double_precision/e_s
 
 sdk/PowerPC_EABI_Support/MSL/MSL_C/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c:
 	.text       start:0x80301650 end:0x80301654
+
+sdk/PowerPC_EABI_Support/MetroTRK/__exception.s:
+	.init       start:0x800046E4 end:0x80006618
