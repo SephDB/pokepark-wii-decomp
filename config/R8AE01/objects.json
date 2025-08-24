@@ -56,5 +56,14 @@
             "MSL_C/MSL_Common_Embedded/Math/Double_precision/e_sqrt.c": "Matching",
             "MSL_C/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c": "Matching"
         }
+    },
+    "base": {
+        "progress_category": "sdk",
+        "mw_version": "Wii/1.1",
+        "cflags": "sdk/RVL_SDK",
+        "src_dir": "src/sdk/RVL_SDK/src",
+        "objects": {
+            "revolution/base/PPCArch.c": "Matching"
+        }
     }
 }

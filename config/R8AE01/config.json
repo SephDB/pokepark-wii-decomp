@@ -27,6 +27,7 @@
                 "-align powerpc",
                 "-enum int",
                 "-fp hardware",
+                "-O4,p",
 
                 "-pragma \"cats off\"",
 
@@ -48,7 +49,6 @@
                 "-common off",
 
                 "-lang=c99",
-                "-O4,p",
                 "-inline auto",
                 "-func_align 4",
 
@@ -64,6 +64,16 @@
             "base": "sdk/MSL",
             "flags": [
                 "-d _IEEE_LIBM"
+            ]
+        },
+        "sdk/RVL_SDK": {
+            "base": "base",
+            "flags": [
+                "-inline auto",
+                "-ipa file",
+                "-fp_contract off",
+                "-func_align 16",
+                "-i src/sdk/RVL_SDK/include/"
             ]
         }
     }

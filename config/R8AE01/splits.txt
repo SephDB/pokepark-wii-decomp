@@ -13,8 +13,12 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
+revolution/base/PPCArch.c:
+	.text       start:0x80205CD0 end:0x80205EE0 align:16
+	.data       start:0x8033B5A8 end:0x8033B5E0
+
 sdk/RVL_SDK/revolution/os/OS.c:
-	.text       start:0x80206010 end:0x80207420
+	.text       start:0x80205EE0 end:0x80207420
 
 sdk/RVL_SDK/revolution/os/OSAlarm.c:
 	.text       start:0x80207420 end:0x80207CF0
@@ -22,14 +26,23 @@ sdk/RVL_SDK/revolution/os/OSAlarm.c:
 sdk/RVL_SDK/revolution/os/OSAlloc.c:
 	.text       start:0x80207CF0 end:0x80208010
 
-libs/RVL_SDK/src/revolution/os/OSArena.c:
+sdk/RVL_SDK/src/revolution/os/OSArena.c:
 	.text       start:0x80208010 end:0x80208110 align:16
 
-libs/RVL_SDK/src/revolution/os/OSAudioSystem.c:
+sdk/RVL_SDK/src/revolution/os/OSAudioSystem.c:
 	.text       start:0x80208110 end:0x802085D0 align:16
 
-libs/RVL_SDK/src/revolution/os/OSCache.c:
+sdk/RVL_SDK/src/revolution/os/OSCache.c:
 	.text       start:0x802085D0 end:0x80208D20 align:16
+
+sdk/RVL_SDK/src/revolution/os/OSContext.c:
+	.text       start:0x80208D20 end:0x80209600 align:16
+
+sdk/RVL_SDK/src/revolution/os/OSError.c:
+	.text       start:0x80209600 end:0x80209D50 align:16
+
+sdk/RVL_SDK/src/revolution/os/OSExec.c:
+	.text       start:0x80209D50 end:0x8020B330 align:16
 
 sdk/RVL_SDK/revolution/os/__start.c:
 	.init       start:0x80004000 end:0x80004300

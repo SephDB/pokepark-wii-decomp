@@ -1,7 +1,16 @@
 #ifndef TYPES_H
 #define TYPES_H
-#include "macros.h" /* IWYU pragma: keep */
+
+#ifndef __cplusplus
+#include <stdarg.h>
 #include <stddef.h>
+#else
+#include <cstdarg>
+#include <cstddef>
+#include <new>
+#endif
+
+#include "macros.h" /* IWYU pragma: keep */
 
 typedef int BOOL;
 
@@ -39,5 +48,9 @@ typedef volatile f64 vf64;
 
 typedef unsigned char byte_t;
 typedef unsigned int register_t;
+
+
+typedef int UNKWORD;
+typedef void UNKTYPE;
 
 #endif

@@ -1,8 +1,8 @@
 #ifndef _STD_NEW
 #define _STD_NEW
 
-#include <MSL_C++/cstddef>
-#include <MSL_C++/exception>
+#include <cstddef>
+#include <exception>
 
 namespace std {
 
