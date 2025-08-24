@@ -1,6 +1,6 @@
 #ifndef MSL_CPP_CSTDDEF_H
 #define MSL_CPP_CSTDDEF_H
-#include <MSL_C/stddef.h>
+#include <stddef.h>
 
 // NOLINTBEGIN(misc-unused-using-decls)
 namespace std {

@@ -1,9 +1,9 @@
 #ifndef _STD_TYPEINFO
 #define _STD_TYPEINFO
 
-#include <MSL_C++/cstring>
-#include <MSL_C++/cstddef>
-#include <MSL_C++/exception>
+#include <cstring>
+#include <cstddef>
+#include <exception>
 
 namespace std {
 

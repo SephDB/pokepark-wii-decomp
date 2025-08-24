@@ -2,8 +2,8 @@
 
 #include "NMWException.h"
 #include "MWCPlusLib.h"
-#include "MSL_C/stdlib.h"
-#include "MSL_C++/exception"
+#include <stdlib.h>
+#include <exception>
 
 #define ARRAY_HEADER_SIZE 16
 

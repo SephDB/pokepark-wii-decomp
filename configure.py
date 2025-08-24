@@ -185,18 +185,13 @@ cflags: dict[str, dict] = flags["cflags"]
 
 cflags_includes = [
     # C/C++ stdlib
-    # STLport requires that it comes first in the include path list
-    # "-i src/system/stlport",
     f"-i build/{config.version}/include",
     "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C",
-    # Not included since it's all wrapped by stlport
     "-i src/sdk/PowerPC_EABI_Support/MSL/MSL_C++",
-
-    # To allow referring directly to the MSL SDK instead of going through STLport
-    "-i src/sdk/PowerPC_EABI_Support/MSL",
 
     # SDK
     "-i src/sdk",
+    "-i src/sdk/RVL_SDK/include",
 
     # Project source
     "-i src",
@@ -338,7 +333,6 @@ for (lib, lib_config) in objects.items():
                     obj_config["cflags"] = get_cflags(object_cflags)
 
             lib_objects.append(Object(completed, path, **obj_config))
-
     libs.append({
         "lib": lib,
         "cflags": lib_cflags,
