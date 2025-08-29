@@ -148,7 +148,7 @@ def sync_symbols_txt_line(line: str):
     elif decomp_has_name and ghidra_has_name and decomp_name != ghidra_name:
         # conflict!
         # TODO: when both ghidra and symbols.txt define a symbol, prefer the decompilation's name and overwrite ghidra's
-        pass
+        rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
 
     return line
 
@@ -179,7 +179,7 @@ def sync_symbols_txt(symbols_txt_path):
 
 log = []
 
-decomp_path = Path(str(askDirectory("Select the mkw decompilation directory", "Sync Symbols")))
+decomp_path = Path(str(askDirectory("Select the decompilation directory", "Sync Symbols")))
 
 dol_symbols_txt_path = decomp_path / "config" / "R8AE01" / "symbols.txt"
 

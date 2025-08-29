@@ -29,6 +29,8 @@
 #define DECOMP_FORCEFUNC_TEMPL(module, cls, func, ...)
 #define DECOMP_FORCEDTOR(module, cls)
 #define DECOMP_FORCEBLOCK(module, ...)
+#define CW_FORCE_BSS(module, ...)
+#define CW_FORCE_STRINGS(module, ...)
 // Compile with matching hacks.
 // (This version of CW does not support pragmas inside macros.)
 #else
@@ -55,6 +57,19 @@
 
 // Force referenced destructor
 #define DECOMP_FORCEDTOR(module, cls) DECOMP_FORCEFUNC(module, cls, ~cls())
+
+// Force BSS order
+#define CW_FORCE_BSS(module, ...)                                              \
+    void fake_function(...);                                                   \
+    void FORCE_BSS##module##x(void);                                           \
+    void FORCE_BSS##module##x(void) { fake_function(__VA_ARGS__); }
+
+// Force strings into pool
+#define CW_FORCE_STRINGS(module, ...)                                          \
+    void fake_function(...);                                                   \
+    void FORCE_STRINGS##module(void);                                          \
+    void FORCE_STRINGS##module(void) { fake_function(__VA_ARGS__); }
+
 
 // For more complex forcing requirements
 // Example usage: DECOMP_FORCEBLOCK(Module, (Class* dummy, int arg),

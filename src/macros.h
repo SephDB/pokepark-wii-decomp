@@ -33,4 +33,10 @@
 #define RELEASE(x) (delete x, x = null)
 #define RELEASEARRAY(x) (delete[] (ubyte *)x, x = null)
 
+#ifdef __MWERKS__
+#define AT_ADDRESS(xyz) : (xyz)
+#else
+#define AT_ADDRESS(xyz)
+#endif
+
 #endif

@@ -1,5 +1,5 @@
 #include <revolution/BASE.h>
-#include <revolution/os/OSError.h>
+#include <revolution/OS.h>
 
 #ifdef __MWERKS__
 
