@@ -45,8 +45,9 @@ sdk/RVL_SDK/src/revolution/os/OSError.c:
 sdk/RVL_SDK/src/revolution/os/OSExec.c:
 	.text       start:0x80209D50 end:0x8020B330 align:16
 
-sdk/RVL_SDK/revolution/os/__start.c:
-	.init       start:0x80004000 end:0x80004300
+revolution/os/__start.c:
+	.init       start:0x80004000 end:0x800042F8
+	.sbss       start:0x80486B50 end:0x80486B58
 
 sdk/RVL_SDK/revolution/os/__ppc_eabi_init.c:
 	.init       start:0x80004300 end:0x80004364
