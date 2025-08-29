@@ -72,7 +72,8 @@
         "cflags": "sdk/RVL_SDK",
         "src_dir": "src/sdk/RVL_SDK/src",
         "objects": {
-            "revolution/os/__start.c": "Matching"
+            "revolution/os/__start.c": "Matching",
+            "revolution/os/__ppc_eabi_init.c": "Matching"
         }
     }
 }

@@ -49,8 +49,9 @@ revolution/os/__start.c:
 	.init       start:0x80004000 end:0x800042F8
 	.sbss       start:0x80486B50 end:0x80486B58
 
-sdk/RVL_SDK/revolution/os/__ppc_eabi_init.c:
+revolution/os/__ppc_eabi_init.c:
 	.init       start:0x80004300 end:0x80004364
+	.text       start:0x80213F10 end:0x80213FD0
 
 Runtime/__mem.c:
 	.init       start:0x80004364 end:0x800046E4
