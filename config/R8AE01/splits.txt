@@ -18,36 +18,52 @@ revolution/base/PPCArch.c:
 	.data       start:0x8033B5A8 end:0x8033B5E0
 
 revolution/os/OS.c:
-	.text       start:0x80205EE0 end:0x80207420
+	.text       start:0x80205EE0 end:0x80207420 align:16
 	.data       start:0x8033B5E0 end:0x8033BA88
 	.bss        start:0x803E6C20 end:0x803E6C90
 	.sdata      start:0x80485C98 end:0x80485CC4
 	.sbss       start:0x80486A50 end:0x80486A98
 	.sdata2     start:0x80489640 end:0x80489648
 
-sdk/RVL_SDK/revolution/os/OSAlarm.c:
-	.text       start:0x80207420 end:0x80207CF0
+revolution/os/OSAlarm.c:
+	.text       start:0x80207420 end:0x80207CF0 align:16
+	.data       start:0x8033BA88 end:0x8033BA98
+	.sbss       start:0x80486A98 end:0x80486AA0
 
-sdk/RVL_SDK/revolution/os/OSAlloc.c:
-	.text       start:0x80207CF0 end:0x80208010
+revolution/os/OSAlloc.c:
+	.text       start:0x80207CF0 end:0x80208010 align:16
+	.sdata      start:0x80485CC8 end:0x80485CCC
+	.sbss       start:0x80486AA0 end:0x80486AB0
 
-sdk/RVL_SDK/src/revolution/os/OSArena.c:
+revolution/os/OSArena.c:
 	.text       start:0x80208010 end:0x80208110 align:16
+	.sdata      start:0x80485CD0 end:0x80485CD8
+	.sbss       start:0x80486AB0 end:0x80486AB8
 
-sdk/RVL_SDK/src/revolution/os/OSAudioSystem.c:
+revolution/os/OSAudioSystem.c:
 	.text       start:0x80208110 end:0x802085D0 align:16
+	.data       start:0x8033BA98 end:0x8033BB18
 
-sdk/RVL_SDK/src/revolution/os/OSCache.c:
+revolution/os/OSCache.c:
 	.text       start:0x802085D0 end:0x80208D20 align:16
+	.data       start:0x8033BB18 end:0x8033BD50
 
-sdk/RVL_SDK/src/revolution/os/OSContext.c:
+revolution/os/OSContext.c:
 	.text       start:0x80208D20 end:0x80209600 align:16
+	.data       start:0x8033BD50 end:0x8033BF30
 
-sdk/RVL_SDK/src/revolution/os/OSError.c:
+revolution/os/OSError.c:
 	.text       start:0x80209600 end:0x80209D50 align:16
+	.data       start:0x8033BF30 end:0x8033C210
+	.bss        start:0x803E6C90 end:0x803E6CE0
+	.sdata      start:0x80485CD8 end:0x80485CE0
 
-sdk/RVL_SDK/src/revolution/os/OSExec.c:
+revolution/os/OSExec.c:
 	.text       start:0x80209D50 end:0x8020B330 align:16
+	.data       start:0x8033C210 end:0x8033C280
+	.bss        start:0x803E6CE0 end:0x803E6D00
+	.sdata      start:0x80485CE0 end:0x80485CF0
+	.sbss       start:0x80486AC4 end:0x80486AC8
 
 revolution/os/__start.c:
 	.init       start:0x80004000 end:0x800042F8

@@ -34,7 +34,6 @@ void OSSetAlarm(OSAlarm* alarm, s64 tick, OSAlarmHandler handler);
 void OSSetPeriodicAlarm(OSAlarm* alarm, s64 tick, s64 period,
                         OSAlarmHandler handler);
 void OSCancelAlarm(OSAlarm* alarm);
-void OSSetAlarmTag(OSAlarm* alarm, u32 tag);
 void OSSetAlarmUserData(OSAlarm* alarm, void* userData);
 void* OSGetAlarmUserData(const OSAlarm* alarm);
 void __OSCancelInternalAlarms(struct OSThread* thread);

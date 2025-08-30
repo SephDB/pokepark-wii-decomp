@@ -74,7 +74,14 @@
         "objects": {
             "revolution/os/__start.c": "Matching",
             "revolution/os/__ppc_eabi_init.c": "Matching",
-            "revolution/os/OS.c": "Matching"
+            "revolution/os/OS.c": "Matching",
+            "revolution/os/OSAlarm.c": "Matching",
+            "revolution/os/OSAlloc.c": "Matching",
+            "revolution/os/OSArena.c": "Matching",
+            "revolution/os/OSAudioSystem.c": "Matching",
+            "revolution/os/OSCache.c": "Matching",
+            "revolution/os/OSContext.c": "Matching",
+            "revolution/os/OSError.c": "Matching"
         }
     }
 }
