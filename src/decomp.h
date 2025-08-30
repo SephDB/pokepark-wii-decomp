@@ -31,6 +31,8 @@
 #define DECOMP_FORCEBLOCK(module, ...)
 #define CW_FORCE_BSS(module, ...)
 #define CW_FORCE_STRINGS(module, ...)
+#define DECOMP_INLINE
+#define DECOMP_DONT_INLINE
 // Compile with matching hacks.
 // (This version of CW does not support pragmas inside macros.)
 #else
@@ -78,6 +80,9 @@
 #define DECOMP_FORCEBLOCK(module, params, ...)                                           \
     void CONCAT(FORCEBLOCK##module, __LINE__) params;                                    \
     void CONCAT(FORCEBLOCK##module, __LINE__) params { __VA_ARGS__ }
+
+#define DECOMP_INLINE inline
+#define DECOMP_DONT_INLINE __attribute__((never_inline))
 #endif
 
 /*

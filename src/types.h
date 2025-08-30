@@ -10,6 +10,7 @@
 #include <new>
 #endif
 
+#include "decomp.h"
 #include "macros.h" /* IWYU pragma: keep */
 
 typedef int BOOL;

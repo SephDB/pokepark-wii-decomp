@@ -17,9 +17,13 @@ revolution/base/PPCArch.c:
 	.text       start:0x80205CD0 end:0x80205EE0 align:16
 	.data       start:0x8033B5A8 end:0x8033B5E0
 
-sdk/RVL_SDK/revolution/os/OS.c:
+revolution/os/OS.c:
 	.text       start:0x80205EE0 end:0x80207420
 	.data       start:0x8033B5E0 end:0x8033BA88
+	.bss        start:0x803E6C20 end:0x803E6C90
+	.sdata      start:0x80485C98 end:0x80485CC4
+	.sbss       start:0x80486A50 end:0x80486A98
+	.sdata2     start:0x80489640 end:0x80489648
 
 sdk/RVL_SDK/revolution/os/OSAlarm.c:
 	.text       start:0x80207420 end:0x80207CF0
@@ -220,5 +224,5 @@ MSL_C/MSL_Common_Embedded/Math/Double_precision/e_sqrt.c:
 MSL_C/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c:
 	.text       start:0x80301650 end:0x80301654
 
-sdk/PowerPC_EABI_Support/MetroTRK/__exception.s:
+MetroTRK/__exception.s:
 	.init       start:0x800046E4 end:0x80006618

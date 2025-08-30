@@ -352,7 +352,7 @@ DECL_SECTION(".init") static asm void __init_registers(void) {
     // clang-format on
 }
 
-DECL_SECTION(".init") static void __init_data(void) {
+DECL_SECTION(".init") void __init_data(void) {
     const RomSection* rs;
     const BssSection* bs;
 

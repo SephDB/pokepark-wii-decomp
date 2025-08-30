@@ -251,7 +251,10 @@ if args.map:
     # config.ldflags.append("-listclosure") # For Wii linkers
 
 # Use for any additional files that should cause a re-configure when modified
-config.reconfig_deps = []
+config.reconfig_deps = [
+    config_json_path,
+    objects_path
+]
 
 # Optional numeric ID for decomp.me preset
 # Can be overridden in libraries or objects
