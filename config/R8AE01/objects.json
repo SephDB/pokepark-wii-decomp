@@ -74,7 +74,7 @@
         "objects": {
             "revolution/os/__start.c": "Matching",
             "revolution/os/__ppc_eabi_init.c": "Matching",
-            "revolution/os/OS.c": {"status": "Matching", "comment": "Links but has false relocation in OSInit so doesn't 'match'"}
+            "revolution/os/OS.c": "Matching"
         }
     }
 }

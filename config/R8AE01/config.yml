@@ -4,3 +4,9 @@ object: sys/main.dol
 hash: 8c241f2aa9869a2ffc6d8f68eb55fcd0b6cdf9c8
 symbols: config/R8AE01/symbols.txt
 splits: config/R8AE01/splits.txt
+block_relocations:
+# OSInit false positive relocs to __check_pad3
+- source: .text:0x80206AA8
+  end: .text:0x80206AAC
+- source: .text:0x80206B1C
+  end: .text:0x80206B20

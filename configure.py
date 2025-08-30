@@ -279,7 +279,7 @@ elif args.warn == "error":
 for key in cflags.keys():
     apply_base_cflags(key)
 
-config.linker_version = "Wii/1.0"
+config.linker_version = "Wii/1.1"
 
 
 Matching = True  # Object matches and should be linked
