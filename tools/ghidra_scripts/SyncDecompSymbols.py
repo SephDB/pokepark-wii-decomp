@@ -148,7 +148,8 @@ def sync_symbols_txt_line(line: str):
     elif decomp_has_name and ghidra_has_name and decomp_name != ghidra_name:
         # conflict!
         # TODO: when both ghidra and symbols.txt define a symbol, prefer the decompilation's name and overwrite ghidra's
-        rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
+        #rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
+        pass
 
     return line
 
