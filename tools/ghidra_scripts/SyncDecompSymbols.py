@@ -2,6 +2,7 @@
 # @author KooShnoo, robojumper, SephDB
 # @category GameCube/Wii
 # @runtime PyGhidra
+from typing import Optional
 
 # This script is based on zeldaret/ss' and KooshNoo/mkw's ghidra scripts. Thank you robojumper and KooshNoo!
 
@@ -9,7 +10,6 @@ DUMP_LOG = False
 
 import re
 from pathlib import Path
-from enum import Enum
 import typing
 from datetime import datetime, timezone
 
@@ -18,6 +18,7 @@ if typing.TYPE_CHECKING:
     from ghidra.ghidra_builtins import *
 from ghidra.app.util import NamespaceUtils
 from ghidra.program.model.symbol import SymbolUtilities, SourceType, SymbolType, Symbol
+from java.util import ArrayList #type: ignore
 
 AddressFactory = currentProgram.getAddressFactory()
 
@@ -25,9 +26,13 @@ import demangle
 demangle.mode = "demangle"
 import postprocess_symbol
 
-sym_re = re.compile("(.+) = \\.?([a-z0-9]+):0x([0-9A-Fa-f]{8}).*")
+sym_re = re.compile("(.+) = \\.?([a-z0-9]+):0x([0-9A-Fa-f]{8}).*type:([^ ]*).*")
 name_re = re.compile(".+( = \\.?[a-z0-9]+:0x[0-9A-Fa-f]{8}.*)")
 default_name_re = re.compile("(?:lbl|fn|FUN|DAT|jumptable)(?:_[0-9]+_[a-z]+)?_[0-9A-Fa-f_]+")
+
+def parse_sym_line(line:str) -> tuple[str,str,int,str]:
+    decomp_name, section, raw_addr, symboltype = re.match(sym_re, line).groups()
+    return decomp_name,section,int(raw_addr, 16),symboltype
 
 def do_demangle(name):
     # try demangling
@@ -53,7 +58,6 @@ def ghidra_name_of_symbol(symbol: Symbol):
     name = symbol.getName(True)
 
     # ghidra allows these, dtk doesn't
-    name = name.replace("\\", "_")
     name = name.replace("=", "_eq_")
 
     return name
@@ -95,6 +99,16 @@ def rename_ghidra_symbol(mangled_name: str, addr: int, create_function=False):
     if create_function:
         createFunction(addr_obj, None)
 
+def is_equal(mangled_name, ghidra_name):
+    if mangled_name == ghidra_name:
+        return True
+    demangled_name = do_demangle(mangled_name)
+    name_list = postprocess_symbol.postprocess_demangled_name(demangled_name)
+    name_list = [SymbolUtilities.replaceInvalidChars(part, True) for part in name_list]
+    name = '::'.join(name_list)
+    return name == ghidra_name
+
+always_ghidra:Optional[bool] = None
 
 # syncs one line of symbols.txt with ghidra
 # returns the updated line
@@ -104,8 +118,7 @@ def sync_symbols_txt_line(line: str):
     if line[0] == "@":
         return line
 
-    decomp_name, section, raw_addr = re.match(sym_re, line).groups()
-    addr = int(raw_addr, 16)
+    decomp_name, section, addr, symboltype = parse_sym_line(line)
 
     # dol symbols are listed under their virtual address, with ram beginning at 0x80000000. rel symbols are not
     is_rel = addr < 0x80000000
@@ -129,7 +142,7 @@ def sync_symbols_txt_line(line: str):
     decomp_has_name = not is_default_name(decomp_name,addr)
     ghidra_has_name = ghidra_name is not None and not is_default_name(ghidra_name,addr)
 
-    is_function = section == "text"
+    is_function = symboltype == "function"
     if is_function and (symbol is None or symbol.symbolType != SymbolType.FUNCTION):
         # dtk found a function, but ghidra didn't.
         # dtk's analysis is better than ghidra's, so we trust dtk and create a function
@@ -145,11 +158,23 @@ def sync_symbols_txt_line(line: str):
     elif decomp_has_name and not ghidra_has_name:
         # ghidra doesn't have a name for this but symbols.txt does; copy from symbols.txt to ghidra
         rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
-    elif decomp_has_name and ghidra_has_name and decomp_name != ghidra_name:
+    elif decomp_has_name and ghidra_has_name and not is_equal(decomp_name,ghidra_name):
         # conflict!
-        # TODO: when both ghidra and symbols.txt define a symbol, prefer the decompilation's name and overwrite ghidra's
-        #rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
-        pass
+        rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
+        global always_ghidra
+        if always_ghidra is None:
+            choice = askChoice("Resolve conflict",f"Conflict at 0x{addr:x}:\ndecomp({decomp_name})\nghidra({ghidra_name})",
+                               ArrayList(["Always DTK", "DTK", "Ghidra", "Always Ghidra"]), "Ghidra")
+            pick_ghidra = choice.endswith("Ghidra")
+            if choice.startswith("Always"):
+                always_ghidra = pick_ghidra
+        else:
+            pick_ghidra = always_ghidra
+        if pick_ghidra:
+            return rename_decomp_symbol(line,ghidra_name)
+        else:
+            rename_ghidra_symbol(decomp_name,addr,create_function=is_function)
+        log.append(f"Conflict at 0x{addr:x}: decomp({decomp_name}) ghidra({ghidra_name}) {do_demangle(decomp_name)}")
 
     return line
 
@@ -159,13 +184,25 @@ def sync_symbols_txt(symbols_txt_path):
         symbols_txt = f.readlines()
 
     all_symbols = set()
-    for i, line in enumerate(symbols_txt):
-        symbol_name = re.match(sym_re, line).group(1)
+    priority_symbols:dict[int,tuple[str,str]] = dict()
+    for line in symbols_txt:
+        symbol_name, section, addr, symboltype = parse_sym_line(line)
         all_symbols.add(symbol_name)
-    
+        _,oldsymtype = priority_symbols.get(addr,("","label"))
+        if symboltype == "function" or oldsymtype != "function":
+            priority_symbols[addr] = (symbol_name,symboltype)
+
     for i, line in enumerate(symbols_txt):
+        symbol_name, section, addr, symboltype = parse_sym_line(line)
+        if priority_symbols[addr][0] != symbol_name:
+            # Don't sync symbols with more than one symbol per address
+            continue
+
         updated_line = sync_symbols_txt_line(line)
-        
+
+        if line == updated_line:
+            continue
+
         # skip duplicate symbols
         new_symbol_name = re.match(sym_re, updated_line).group(1)
         if new_symbol_name in all_symbols:
