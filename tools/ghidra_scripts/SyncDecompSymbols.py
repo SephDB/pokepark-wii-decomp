@@ -160,7 +160,6 @@ def sync_symbols_txt_line(line: str):
         rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
     elif decomp_has_name and ghidra_has_name and not is_equal(decomp_name,ghidra_name):
         # conflict!
-        rename_ghidra_symbol(decomp_name, addr, create_function=is_function)
         global always_ghidra
         if always_ghidra is None:
             choice = askChoice("Resolve conflict",f"Conflict at 0x{addr:x}:\ndecomp({decomp_name})\nghidra({ghidra_name})",
