@@ -65,7 +65,8 @@ def ghidra_name_of_symbol(symbol: Symbol):
 
 # edits the symbol name for one line of symbols.txt
 def rename_decomp_symbol(symbols_txt_line: str, new_name: str):
-    return re.sub(name_re, f"{new_name}\\1", symbols_txt_line)
+    replacement = new_name.replace('\\',r'\\')
+    return re.sub(name_re, f"{replacement}\\1", symbols_txt_line)
 
 
 def rename_ghidra_symbol(mangled_name: str, addr: int, create_function=False):
@@ -203,7 +204,10 @@ def sync_symbols_txt(symbols_txt_path):
             continue
 
         # skip duplicate symbols
-        new_symbol_name = re.match(sym_re, updated_line).group(1)
+        re_result = re.match(sym_re, updated_line)
+        if re_result is None:
+            print(f"Broken line output: {line} -> {updated_line}")
+        new_symbol_name = re_result.groups(1)
         if new_symbol_name in all_symbols:
             continue
         all_symbols.add(new_symbol_name)
