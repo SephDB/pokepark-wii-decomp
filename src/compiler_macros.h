@@ -5,6 +5,7 @@
 #define __option(x) 0
 #define __declspec(x)
 #define __attribute__(x)
+#define asm
 #endif
 
 #define ALIGN(x) __attribute__((aligned(x)))
