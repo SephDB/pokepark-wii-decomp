@@ -73,6 +73,32 @@ revolution/os/__ppc_eabi_init.c:
 	.init       start:0x80004300 end:0x80004364
 	.text       start:0x80213F10 end:0x80213FD0
 
+RVL_SDK/src/revolution/bte/gki/gki_buffer.c:
+	.text       start:0x8025DC80 end:0x8025F120 align:16
+
+RVL_SDK/src/revolution/bte/gki/gki_time.c:
+	.text       start:0x8025F120 end:0x8025F6B0 align:16
+
+RVL_SDK/src/revolution/bte/gki/gki_ppc.c:
+	.text       start:0x8025F6B0 end:0x8025F9B4 align:16
+
+flib/scripting/script_print.cpp:
+	.text       start:0x802F1210 end:0x802F1914 align:16
+	.data       start:0x8036C460 end:0x8036C470
+	.sdata      start:0x8048623C end:0x80486250
+
+flib/scripting/Vec3Syscalls.cpp:
+	.text       start:0x802F1920 end:0x802F1D70 align:16
+	.data       start:0x8036C470 end:0x8036C530
+
+flib/flSlice2.cpp:
+	.text       start:0x802F3130 end:0x802F33D0 align:16
+	.ctors      start:0x80306878 end:0x8030687C
+	.sbss       start:0x804873C8 end:0x804873D0
+
+flib/flOS.cpp:
+	.text       start:0x802F33D0 end:0x802F3464 align:16
+
 Runtime/__mem.c:
 	.init       start:0x80004364 end:0x800046E4
 	.text       start:0x802F3464 end:0x802F3480
