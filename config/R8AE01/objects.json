@@ -83,5 +83,14 @@
             "revolution/os/OSContext.c": "Matching",
             "revolution/os/OSError.c": "Matching"
         }
+    },
+    "flib": {
+        "progress_category": "game",
+        "mw_version": "Wii/1.1",
+        "cflags": "base",
+        "src_dir": "src",
+        "objects": {
+            "flib/flOS.cpp": "Matching"
+        }
     }
 }
