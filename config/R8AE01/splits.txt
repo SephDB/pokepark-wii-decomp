@@ -63,7 +63,7 @@ revolution/os/OSExec.c:
 	.data       start:0x8033C210 end:0x8033C280
 	.bss        start:0x803E6CE0 end:0x803E6D00
 	.sdata      start:0x80485CE0 end:0x80485CF0
-	.sbss       start:0x80486AC4 end:0x80486AC8
+	.sbss       start:0x80486AB8 end:0x80486AC8
 
 revolution/os/__start.c:
 	.init       start:0x80004000 end:0x800042F8
@@ -82,10 +82,17 @@ RVL_SDK/src/revolution/bte/gki/gki_time.c:
 RVL_SDK/src/revolution/bte/gki/gki_ppc.c:
 	.text       start:0x8025F6B0 end:0x8025F9B4 align:16
 
-flib/scripting/script_print.cpp:
-	.text       start:0x802F1210 end:0x802F1914 align:16
-	.data       start:0x8036C460 end:0x8036C470
-	.sdata      start:0x8048623C end:0x80486250
+flib/ScriptLog.cpp:
+	.text       start:0x802EC130 end:0x802EC8E0 align:16
+
+flib/flRevolutionAlloc.cpp:
+	.text       start:0x802EC8E0 end:0x802ECBE0 align:16
+	.ctors      start:0x8030686C end:0x80306870
+
+flib/scripting/core_syscalls.cpp:
+	.text       start:0x802EF620 end:0x802F1914 align:16
+	.data       start:0x8036C220 end:0x8036C470
+	.sdata      start:0x80486238 end:0x80486250
 
 flib/scripting/Vec3Syscalls.cpp:
 	.text       start:0x802F1920 end:0x802F1D70 align:16
