@@ -9,6 +9,7 @@ from typing import Optional
 DUMP_LOG = False
 
 import re
+import os
 from pathlib import Path
 import typing
 from datetime import datetime, timezone
@@ -18,7 +19,7 @@ if typing.TYPE_CHECKING:
     from ghidra.ghidra_builtins import *
 from ghidra.app.util import NamespaceUtils
 from ghidra.program.model.symbol import SymbolUtilities, SourceType, SymbolType, Symbol
-from java.util import ArrayList #type: ignore
+from java.util import ArrayList
 
 AddressFactory = currentProgram.getAddressFactory()
 
@@ -121,16 +122,6 @@ def sync_symbols_txt_line(line: str):
 
     decomp_name, section, addr, symboltype = parse_sym_line(line)
 
-    # dol symbols are listed under their virtual address, with ram beginning at 0x80000000. rel symbols are not
-    is_rel = addr < 0x80000000
-    if is_rel:
-        # in ghidra, symbols from StaticR.rel ('rel symbols') are stored at their virtual address.
-        rel_offset = STATICR_LOAD_ADDRESS.get(section)
-        if rel_offset is None:
-            log.append(f"warning! ignoring unsupported rel section {section}")
-            return line
-        addr += rel_offset
-
     addr_string = f"0x{addr:x}"
     addr_obj = AddressFactory.getAddress(addr_string)
     symbol = getSymbolAt(addr_obj)
@@ -220,13 +211,7 @@ def sync_symbols_txt(symbols_txt_path):
 
 log = []
 
-decomp_path = Path(str(askDirectory("Select the decompilation directory", "Sync Symbols")))
-
-dol_symbols_txt_path = decomp_path / "config" / "R8AE01" / "symbols.txt"
+dol_symbols_txt_path = Path(str(askFile("Select the symbols.txt to sync", "Sync Symbols")))
 
 sync_symbols_txt(dol_symbols_txt_path)
 
-if DUMP_LOG:
-    script_execution_time = datetime.now(timezone.utc).replace(tzinfo=None).isoformat(timespec='seconds')
-    with open(decomp_path / f"ghidra_sync_log_{script_execution_time}.txt", "w") as f:
-        f.write("\n".join(log))
