@@ -53,6 +53,8 @@ def do_demangle(name):
     return name
 
 def is_default_name(name: str, address: int):
+    if '::' in name:
+        return False
     return re.search(default_name_re, name) or name.startswith("@") or name.endswith(f"_{address:x}") or name.endswith(f"_{address:X}")
 
 def ghidra_name_of_symbol(symbol: Symbol):
