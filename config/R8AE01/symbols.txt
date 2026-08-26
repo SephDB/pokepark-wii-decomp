@@ -4972,8 +4972,8 @@ nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Gimmick,unsigne
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Gimmick,unsignedshort,nsDelhi::nsObject::Gimmick>::Remove = .text:0x800B8D60; // type:function size:0x710
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Article,unsignedshort,nsDelhi::nsObject::Article>::Find = .text:0x800B9470; // type:function size:0xCC
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Article,unsignedshort,nsDelhi::nsObject::Article>::Remove = .text:0x800B9540; // type:function size:0x710
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0x24 = .text:0x800B9C50; // type:function size:0xCC
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0x20 = .text:0x800B9D20; // type:function size:0x710
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::Find = .text:0x800B9C50; // type:function size:0xCC
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::Remove = .text:0x800B9D20; // type:function size:0x710
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Player,unsignedshort,nsDelhi::nsObject::Player>::Find = .text:0x800BA430; // type:function size:0xCC
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Player,unsignedshort,nsDelhi::nsObject::Player>::Remove = .text:0x800BA500; // type:function size:0x710
 nsDelhi::nsObject::ObjectManager::FindPlayer = .text:0x800BAC10; // type:function size:0x38
@@ -5047,7 +5047,7 @@ nsDelhi::nsCollection::CollectionAdapter<nsDelhi::nsCollection::LumpArray<unsign
 nsDelhi::nsCollection::CollectionAdapter<nsDelhi::nsCollection::LumpArray<unsignedlong>>::virt0x14 = .text:0x800BE1F0; // type:function size:0xC
 fn_800BE200 = .text:0x800BE200; // type:function size:0x8
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Player,unsignedshort,nsDelhi::nsObject::Player>::__dt = .text:0x800BE210; // type:function size:0x80
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0x10 = .text:0x800BE290; // type:function size:0x80
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::__dt = .text:0x800BE290; // type:function size:0x80
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Article,unsignedshort,nsDelhi::nsObject::Article>::__dt = .text:0x800BE310; // type:function size:0x80
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Gimmick,unsignedshort,nsDelhi::nsObject::Gimmick>::__dt = .text:0x800BE390; // type:function size:0x80
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Various,unsignedshort,nsDelhi::nsObject::Various>::__dt = .text:0x800BE410; // type:function size:0x80
@@ -5090,10 +5090,10 @@ nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Article,unsigne
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Article,unsignedshort,nsDelhi::nsObject::Article>::GetRootObject = .text:0x800C0AE0; // type:function size:0x24
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Article,unsignedshort,nsDelhi::nsObject::Article>::NextInOrder = .text:0x800C0B10; // type:function size:0xB4
 fn_800C0BC4 = .text:0x800C0BC4; // type:function size:0x4
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0x1C = .text:0x800C0BD0; // type:function size:0x450
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0x28 = .text:0x800C1020; // type:function size:0x10
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0x8 = .text:0x800C1030; // type:function size:0x24
-nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::virt0xC = .text:0x800C1060; // type:function size:0xB4
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::Insert = .text:0x800C0BD0; // type:function size:0x450
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::IsEmpty = .text:0x800C1020; // type:function size:0x10
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::GetRootObject = .text:0x800C1030; // type:function size:0x24
+nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Pokemon,unsignedshort,nsDelhi::nsObject::Pokemon>::NextInOrder = .text:0x800C1060; // type:function size:0xB4
 fn_800C1114 = .text:0x800C1114; // type:function size:0x4
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Player,unsignedshort,nsDelhi::nsObject::Player>::Insert = .text:0x800C1120; // type:function size:0x450
 nsDelhi::nsCollection::RedBlackTreeEntityNode<nsDelhi::nsObject::Player,unsignedshort,nsDelhi::nsObject::Player>::IsEmpty = .text:0x800C1570; // type:function size:0x10
